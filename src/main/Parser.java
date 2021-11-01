@@ -120,10 +120,7 @@ public class Parser {
 		this.arquivoSaida = caminhoCompletoSaida;
 
 		try {
-			File file = new File(caminhoCompletoSaida);
-			if(!file.exists()) {
-				file.createNewFile();
-			}
+			File file = abrirArquivoSaida(caminhoCompletoSaida);
 
 			FileWriter filew = new FileWriter(file);
 			BufferedWriter bufferw = new BufferedWriter(filew);
@@ -177,6 +174,14 @@ public class Parser {
 			throw new ArquivoNaoEncontradoException(path);
 		}
 		return input;
+	}
+
+	private File abrirArquivoSaida(String caminhoCompletoSaida) throws IOException {
+		File file = new File(caminhoCompletoSaida);
+		if(!file.exists()) {
+			file.createNewFile();
+		}
+		return file;
 	}
 
 	public String getArquivoSaida() {
