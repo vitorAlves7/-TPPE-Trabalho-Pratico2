@@ -7,6 +7,6 @@ Técnicas de Programação em Plataformas Emergentes, Trabalho Prático 2 - Dese
 | ------------------------------- | ---------- |
 | João Vitor Ferreira Alves  | 16/0127912 |
 | Kalebe Lopes da Cunha  | 16/0010900 |
-| Rafael Santos Teodosio 160142466 | 16/0142466 |
+| Rafael Santos Teodosio | 16/0142466 |
 
  
