@@ -16,7 +16,10 @@ public class Parser {
 	private Vector <Vector <Double>> buffer;
 	private char delimitador;
 	private String caminhoArquivoSaida;
-	
+	private int formato;
+	public static final int COLUNA = 0;
+	public static final int LINHA = 1;
+
 	public Parser(){
 		buffer = new Vector <Vector <Double>>();
 		delimitador = ';';
@@ -32,9 +35,9 @@ public class Parser {
 		}
 
 		while(input.hasNextLine()) {
-			
+
 			String data = input.nextLine();
-			
+
 			if (data.startsWith("-")) {
 				Vector<Double> row = new Vector<Double>();
 				buffer.add(row);
@@ -43,9 +46,9 @@ public class Parser {
 				buffer.lastElement().add(Double.parseDouble(data));
 			}
 		}
-		
+
 		input.close();
-		
+
 	}
 
 	public Vector <Vector <Double>> getBuffer() {
@@ -60,7 +63,7 @@ public class Parser {
 			throw new DelimitadorInvalidoException(delimitador);
 		}
 	}
-	
+
 	public char getDelimitador() {
 		return delimitador;
 	}
@@ -69,18 +72,26 @@ public class Parser {
 		if (!caminhoArquivoSaida.endsWith("/")) {
 			caminhoArquivoSaida += "/";
 		}
-		
+
 		Path caminho = Paths.get(caminhoArquivoSaida);
-		
+
 		if(!Files.isWritable(caminho)) {
 			throw new EscritaNaoPermitidaException(caminhoArquivoSaida);
 		}
-		
+
 		this.caminhoArquivoSaida = caminhoArquivoSaida;
 	}
 
 	public String getCaminhoArquivoSaida() {
 		return caminhoArquivoSaida;
 	}
-	
+
+	public void setFormatoSaida(int formato) {
+		this.formato = formato;
+
+	}
+
+	public int getFormatoSaida() {
+		return formato;
+	}
 }
