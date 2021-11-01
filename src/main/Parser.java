@@ -28,12 +28,7 @@ public class Parser {
 	}
 
 	public void lerArquivo(String path) throws ArquivoNaoEncontradoException {
-		Scanner input;
-		try {
-			input = new Scanner(new FileReader(path));
-		} catch (FileNotFoundException e) {
-			throw new ArquivoNaoEncontradoException(path);
-		}
+		Scanner input = abrirArquivo(path);
 
 		while(input.hasNextLine()) {
 
@@ -172,6 +167,16 @@ public class Parser {
 			System.out.println(e);
 			throw new EscritaNaoPermitidaException(caminhoCompletoSaida);
 		}
+	}
+
+	private Scanner abrirArquivo(String path) throws ArquivoNaoEncontradoException {
+		Scanner input;
+		try {
+			input = new Scanner(new FileReader(path));
+		} catch (FileNotFoundException e) {
+			throw new ArquivoNaoEncontradoException(path);
+		}
+		return input;
 	}
 
 	public String getArquivoSaida() {
