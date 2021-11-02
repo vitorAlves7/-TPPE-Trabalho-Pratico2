@@ -20,11 +20,13 @@ public class Parser {
 	private int formato;
 	public static final int COLUNA = 0;
 	public static final int LINHA = 1;
+	public Persistencia persistencia;
 
 	public Parser(){
 		buffer = new Vector <Vector <Double>>();
 		delimitador = ';';
 		caminhoArquivoSaida = "assets/";
+		persistencia = new Persistencia();
 	}
 
 	public void lerArquivo(String path) throws ArquivoNaoEncontradoException {
