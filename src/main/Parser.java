@@ -32,9 +32,9 @@ public class Parser {
 	public void lerArquivo(String path) throws ArquivoNaoEncontradoException {
 		Scanner input = abrirArquivo(path);
 
-		while(input.hasNextLine()) {
-
-			String data = input.nextLine();
+		persistencia.iniciaLeitura(input);
+		while(persistencia.temProximaLinha()) {
+			String data = persistencia.lerArquivo();
 
 			if (data.startsWith("-")) {
 				Vector<Double> row = new Vector<Double>();
@@ -45,7 +45,8 @@ public class Parser {
 			}
 		}
 
-		input.close();
+		persistencia.fechaLeitura();
+
 		int lastIndex = path.lastIndexOf('/');
 		if(lastIndex != -1) {
 			this.setNomeArquivoEntrada(path.substring(lastIndex+1));
