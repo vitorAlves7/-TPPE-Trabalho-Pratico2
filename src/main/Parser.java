@@ -20,24 +20,21 @@ public class Parser {
 	private int formato;
 	public static final int COLUNA = 0;
 	public static final int LINHA = 1;
+	public Persistencia persistencia;
 
 	public Parser(){
 		buffer = new Vector <Vector <Double>>();
 		delimitador = ';';
 		caminhoArquivoSaida = "assets/";
+		persistencia = new Persistencia();
 	}
 
 	public void lerArquivo(String path) throws ArquivoNaoEncontradoException {
-		Scanner input;
-		try {
-			input = new Scanner(new FileReader(path));
-		} catch (FileNotFoundException e) {
-			throw new ArquivoNaoEncontradoException(path);
-		}
+		Scanner input = abrirArquivo(path);
 
-		while(input.hasNextLine()) {
-
-			String data = input.nextLine();
+		persistencia.iniciaLeitura(input);
+		while(persistencia.temProximaLinha()) {
+			String data = persistencia.lerArquivo();
 
 			if (data.startsWith("-")) {
 				Vector<Double> row = new Vector<Double>();
@@ -48,12 +45,13 @@ public class Parser {
 			}
 		}
 
-		input.close();
+		persistencia.fechaLeitura();
+
 		int lastIndex = path.lastIndexOf('/');
 		if(lastIndex != -1) {
-			this.nomeArquivoEntrada = path.substring(lastIndex+1);
+			this.setNomeArquivoEntrada(path.substring(lastIndex+1));
 		} else {
-			this.nomeArquivoEntrada = path;
+			this.setNomeArquivoEntrada(path);
 		}
 
 	}
@@ -103,7 +101,7 @@ public class Parser {
 	}
 
 	public void escreverArquivo() throws EscritaNaoPermitidaException {
-		String caminhoCompletoSaida = this.nomeArquivoEntrada;
+		String caminhoCompletoSaida = getNomeArquivoEntrada();
 
 		int indexPonto = -1;
 		for(int i = caminhoCompletoSaida.length() - 1; i >= 0; i--) {
@@ -121,60 +119,42 @@ public class Parser {
 			caminhoCompletoSaida += "Tab";
 		}
 
-		caminhoCompletoSaida = caminhoArquivoSaida + caminhoCompletoSaida;
-		this.arquivoSaida = caminhoCompletoSaida;
+		caminhoCompletoSaida = getCaminhoArquivoSaida() + caminhoCompletoSaida;
+		setArquivoSaida(caminhoCompletoSaida);
 
+		new EscreverArquivo(this).escreve();
+		return;
+	}
+
+	private Scanner abrirArquivo(String path) throws ArquivoNaoEncontradoException {
+		Scanner input;
 		try {
-			File file = new File(caminhoCompletoSaida);
-			if(!file.exists()) {
-				file.createNewFile();
-			}
-
-			FileWriter filew = new FileWriter(file);
-			BufferedWriter bufferw = new BufferedWriter(filew);
-
-			if(this.formato == LINHA) {
-				for(int index = 0; index < this.buffer.size(); index++) {
-					if(index != 0) bufferw.newLine();
-					bufferw.write(Double.toString(index+1));
-					for (int i=0; i < this.buffer.elementAt(index).size(); i++) {
-						bufferw.write(this.delimitador);
-						bufferw.write(Double.toString(buffer.elementAt(index).elementAt(i)));
-					}
-				}
-			} else if(this.formato == COLUNA) {
-				Vector <Vector <String>> linhas = new Vector< Vector <String>>();
-				int max_size=0;
-				for(int i=0; i<buffer.size(); i++) {
-					if(i!=0) bufferw.write(this.delimitador);
-					bufferw.write(Double.toString(i+1));
-					bufferw.write(Double.toString(i+1));
-					if(buffer.elementAt(i).size() > max_size) max_size = buffer.elementAt(i).size();
-				}
-				bufferw.newLine();
-				for(int j=0; j<max_size; j++) { // linha
-					if(j!=0) bufferw.newLine();
-					for(int i=0; i<buffer.size(); i++) {
-						if(i!=0) bufferw.write(this.delimitador);
-						if(buffer.elementAt(i).size() > j) {
-							bufferw.write(Double.toString(buffer.elementAt(i).elementAt(j)));
-						}
-					}
-				}
-
-			} else {
-//		    	throw new FormatoInvalidoException(this.formato);
-			}
-
-			bufferw.close();
-			filew.close();
-		} catch (Exception e) {
-			System.out.println(e);
-			throw new EscritaNaoPermitidaException(caminhoCompletoSaida);
+			input = new Scanner(new FileReader(path));
+		} catch (FileNotFoundException e) {
+			throw new ArquivoNaoEncontradoException(path);
 		}
+		return input;
+	}
+
+	public File abrirArquivoSaida(String caminhoCompletoSaida) throws IOException {
+		File file = new File(caminhoCompletoSaida);
+		if(!file.exists()) {
+			file.createNewFile();
+		}
+		return file;
 	}
 
 	public String getArquivoSaida() {
 		return arquivoSaida;
+	}
+
+	public String getNomeArquivoEntrada() { return nomeArquivoEntrada; }
+
+	public void setNomeArquivoEntrada(String nomeArquivoEntrada) {
+		this.nomeArquivoEntrada = nomeArquivoEntrada;
+	}
+
+	public void setArquivoSaida(String caminhoCompletoSaida) {
+		this.arquivoSaida = caminhoCompletoSaida;
 	}
 }
